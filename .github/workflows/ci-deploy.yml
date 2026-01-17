@@ -1,15 +1,12 @@
 name: CI/CD Pipeline - Build & Deploy
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 env:
   NODE_VERSION: '20'
   REGISTRY: ghcr.io
-
 jobs:
   lint-and-build:
     runs-on: ubuntu-latest
@@ -18,18 +15,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-              - run: |
-        if [ ! -f package-lock.json ]; then
-          npm install --package-lock-only
-        fi
-      - run: npm ci
+      - run: npm install
       - run: npm run lint || true
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: .next
-
   deploy-to-vercel:
     needs: lint-and-build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -39,11 +31,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-              - run: |
-        if [ ! -f package-lock.json ]; then
-          npm install --package-lock-only
-        fi
-      - run: npm ci
+      - run: npm install
       - run: npm run build
       - name: Deploy to Vercel
         uses: vercel/action@master
@@ -51,7 +39,6 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-
   security-check:
     runs-on: ubuntu-latest
     steps:
@@ -59,9 +46,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-              - run: |
-        if [ ! -f package-lock.json ]; then
-          npm install --package-lock-only
-        fi
-      - run: npm ci
+      - run: npm install
       - run: npm audit --audit-level=moderate || true
