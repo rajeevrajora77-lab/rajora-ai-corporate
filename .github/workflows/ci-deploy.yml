@@ -18,7 +18,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+              - run: |
+        if [ ! -f package-lock.json ]; then
+          npm install --package-lock-only
+        fi
       - run: npm ci
       - run: npm run lint || true
       - run: npm run build
@@ -36,6 +39,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+              - run: |
+        if [ ! -f package-lock.json ]; then
+          npm install --package-lock-only
+        fi
       - run: npm ci
       - run: npm run build
       - name: Deploy to Vercel
@@ -52,5 +59,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+              - run: |
+        if [ ! -f package-lock.json ]; then
+          npm install --package-lock-only
+        fi
       - run: npm ci
       - run: npm audit --audit-level=moderate || true
